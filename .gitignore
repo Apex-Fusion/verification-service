@@ -1,0 +1,41 @@
+# Node.js dependencies
+node_modules/
+
+# TypeScript output
+dist/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+
+# MacOS system files
+.DS_Store
+
+# Temporary files
+tmp/
+temp/
+
+# IDE settings
+# VS Code
+.vscode/
+# JetBrains IDEs (IntelliJ, WebStorm, etc.)
+.idea/
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Backup files
+*.bak
+*.swp
+
+# Miscellaneous
+Thumbs.db
