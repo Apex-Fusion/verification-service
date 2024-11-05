@@ -1,0 +1,5 @@
+{
+  "name": "TelegramGroupVerification",
+  "description": "Verifies if user is in a Telegram group",
+  "path": "./TelegramGroupVerification"
+}
