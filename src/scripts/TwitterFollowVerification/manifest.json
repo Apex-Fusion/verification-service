@@ -1,0 +1,5 @@
+{
+  "name": "TwitterFollowVerification",
+  "description": "Verifies if a user follows the Apex Fusion account on Twitter",
+  "path": "./TwitterFollowVerification"
+}

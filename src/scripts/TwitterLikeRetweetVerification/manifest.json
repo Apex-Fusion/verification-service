@@ -1,0 +1,5 @@
+{
+  "name": "TwitterLikeRetweetVerification",
+  "description": "Verifies if a user has liked and retweeted Apex Fusion posts",
+  "path": "./TwitterLikeRetweetVerification"
+}

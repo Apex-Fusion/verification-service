@@ -1,0 +1,5 @@
+{
+  "name": "DiscordJoinVerification",
+  "description": "Verifies if a user has joined the Apex Fusion Discord server",
+  "path": "./DiscordJoinVerification"
+}

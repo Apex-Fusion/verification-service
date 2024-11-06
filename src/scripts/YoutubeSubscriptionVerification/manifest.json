@@ -1,0 +1,5 @@
+{
+  "name": "YoutubeSubscriptionVerification",
+  "description": "Verifies if a user is subscribed to the Apex Fusion YouTube channel",
+  "path": "./YoutubeSubscriptionVerification"
+}
