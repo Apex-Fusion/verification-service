@@ -1,0 +1,6 @@
+{
+    "name": "WalletVerification",
+    "description": "Verifies if a user owns a wallet on a given network",
+    "path": "./WalletVerification"
+  }
+  

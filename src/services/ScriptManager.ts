@@ -1,10 +1,11 @@
-import {VerificationScript} from '../interfaces/VerificationScript';
+import {VerificationPlugin} from '../interfaces/VerificationPlugin';
 import * as fs from 'fs';
 import * as path from 'path';
-import {watch} from 'fs';
+import {watch, readFileSync} from 'fs';
+import { VerificationScript } from '../interfaces/VerificationScript';
 
 export class ScriptManager {
-    private scripts: Map<string, VerificationScript> = new Map();
+    private scripts: Map<string, VerificationPlugin> = new Map();
     private scriptsDir = path.join(__dirname, '../scripts');
 
     constructor() {
@@ -13,16 +14,17 @@ export class ScriptManager {
     }
 
     private loadScripts() {
-        const newScripts: Map<string, VerificationScript> = new Map();
+        const newScripts: Map<string, VerificationPlugin> = new Map();
 
         fs.readdirSync(this.scriptsDir).forEach((scriptFolder) => {
             const manifestPath = path.join(this.scriptsDir, scriptFolder, 'manifest.json');
             if (fs.existsSync(manifestPath)) {
                 try {
-                    const {name, path: scriptPath} = require(manifestPath);
+                    const {name, description, path: scriptPath} = require(manifestPath);
                     const scriptModule = require(path.join(this.scriptsDir, scriptFolder, scriptPath));
                     const scriptInstance: VerificationScript = new scriptModule[name]();
-                    newScripts.set(scriptInstance.name, scriptInstance);
+                    const verificationPluginInstance: VerificationPlugin = { method: scriptInstance, name, description, path: scriptPath };
+                    newScripts.set(scriptInstance.name, verificationPluginInstance);
                 } catch (err) {
                     console.error(`Failed to load script from ${manifestPath}:`, err);
                 }
@@ -46,10 +48,14 @@ export class ScriptManager {
         if (!script) {
             throw new Error(`No script registered with name ${name}.`);
         }
-        return await script.execute(params);
+        return await script.method!.execute(params);
     }
 
-    listScripts(): string[] {
-        return Array.from(this.scripts.keys());
+    listScripts(): any[] {
+        return Array.from(this.scripts.keys()).map(key => ({
+                name: this.scripts.get(key)!.name,
+                description: this.scripts.get(key)!.description,
+            })
+        );
     }
 }

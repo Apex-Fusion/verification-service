@@ -1,0 +1,6 @@
+{
+    "name": "TxNumNexusVerification",
+    "description": "Verifies if a user has created more than `minTxThreshold` transactions on a given network",
+    "path": "./TxNumNexusVerification"
+  }
+  
