@@ -1,0 +1,19 @@
+{
+  "name": "OpenAIQueryScript",
+  "description": "Sends a question and text to OpenAi and returns a JSON response with a boolean result and a comment, using the gpt-4o model.",
+  "path": "./OpenAIQueryScript",
+  "parameters": [
+    {
+      "name": "question",
+      "type": "string",
+      "required": true,
+      "description": "The question to ask OpenAi."
+    },
+    {
+      "name": "text",
+      "type": "string",
+      "required": true,
+      "description": "The text input to be analyzed by OpenAi."
+    }
+  ]
+}

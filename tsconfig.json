@@ -6,7 +6,10 @@
     "module": "commonjs",
     "target": "es6",
     "esModuleInterop": true,
+    "resolveJsonModule": true,
     "skipLibCheck": true
   },
-  "include": ["src/**/*"]
+  "include": [
+    "src/**/*"
+  ]
 }

@@ -1,5 +1,6 @@
 import { VerificationScript } from '../../interfaces/VerificationScript';
 import axios from 'axios';
+import manifest from './manifest.json';
 
 const numTxNexus = async (address: string): Promise<number> => {
     const res = await axios.get('https://explorer.nexus.testnet.apexfusion.org/api', { params: {
@@ -10,27 +11,24 @@ const numTxNexus = async (address: string): Promise<number> => {
         sort: 'desc'
     }})
 
-    const result = res.data;
-
-    return result > 0 ?
-        result[0].nonce
-        :
-        0
+    return res.data.result.length > 0 ? res.data.result.length : 0;
 }
 
 export class TxNumNexusVerification implements VerificationScript {
-    name = 'TxNumNexusVerification';
-    description = 'Verifies if a user has created more than `minTxThreshold` transactions on a given network';
+    name = manifest.name;
+    description = manifest.description;
 
     async execute(params: any): Promise<boolean> {
         const { address, network, minTxThreshold } = params;
         let numTx = 0;
 
         switch (network) {
-            case 'nexus': 
+            case 'nexus':
                 numTx = await numTxNexus(address);
+                console.log(`Number of transactions for ${address} on Nexus: ${numTx}`);
+                break; // Prevent falling through
             default:
-                throw new Error('Unimplemented method')
+                throw new Error('Unimplemented method');
         }
 
         return numTx > minTxThreshold;

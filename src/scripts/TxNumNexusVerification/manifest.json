@@ -1,6 +1,26 @@
 {
-    "name": "TxNumNexusVerification",
-    "description": "Verifies if a user has created more than `minTxThreshold` transactions on a given network",
-    "path": "./TxNumNexusVerification"
-  }
+  "name": "TxNumNexusVerification",
+  "description": "Verifies if a user has created more than `minTxThreshold` transactions on a given network",
+  "path": "./TxNumNexusVerification",
+  "parameters": [
+    {
+      "name": "address",
+      "type": "string",
+      "required": true,
+      "description": "The account address on the Nexus network for which the transaction count is to be verified."
+    },
+    {
+      "name": "network",
+      "type": "string",
+      "required": true,
+      "description": "The network identifier. For this verification, it should be set to 'nexus'."
+    },
+    {
+      "name": "minTxThreshold",
+      "type": "number",
+      "required": true,
+      "description": "The minimum number of transactions required for the account to pass verification."
+    }
+  ]
+}
   

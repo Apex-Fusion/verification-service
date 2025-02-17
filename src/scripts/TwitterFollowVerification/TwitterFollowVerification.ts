@@ -1,9 +1,10 @@
 import axios from 'axios';
 import { VerificationScript } from '../../interfaces/VerificationScript';
+import manifest from './manifest.json';
 
 export class TwitterFollowVerification implements VerificationScript {
-    name = 'TwitterFollowVerification';
-    description = 'Verifies if a user follows the Apex Fusion account on Twitter';
+    name = manifest.name;
+    description = manifest.description;
 
     async execute(params: { bearerToken: string; apexTwitterId: string; userTwitterId: string }): Promise<boolean> {
         const { bearerToken, apexTwitterId, userTwitterId } = params;

@@ -1,9 +1,10 @@
 import axios from 'axios';
 import { VerificationScript } from '../../interfaces/VerificationScript';
+import manifest from './manifest.json';
 
 export class TelegramGroupVerification implements VerificationScript {
-    name = 'TelegramGroupVerification';
-    description = 'Verifies if a user is a member of a specific Telegram group';
+    name = manifest.name;
+    description = manifest.description;
 
     async execute(params: { botToken: string; chatId: string; userId: number }): Promise<boolean> {
         const { botToken, chatId, userId } = params;

@@ -7,7 +7,8 @@
     "build": "tsc && node copy-manifests.js",
     "start": "npm run build && node dist/index.js",
     "dev": "tsc --watch & nodemon dist/index.js",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "generate": "node generator.mjs"
   },
   "keywords": [],
   "author": "",
@@ -18,8 +19,9 @@
     "axios": "^1.7.7",
     "body-parser": "^1.20.3",
     "dotenv": "^16.4.5",
-    "ethers": "^6.13.4",
-    "express": "^4.21.1"
+    "ethers": "^6.13.5",
+    "express": "^4.21.1",
+    "inquirer": "^12.4.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",

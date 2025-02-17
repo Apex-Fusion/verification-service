@@ -1,5 +1,25 @@
 {
   "name": "TwitterFollowVerification",
   "description": "Verifies if a user follows the Apex Fusion account on Twitter",
-  "path": "./TwitterFollowVerification"
+  "path": "./TwitterFollowVerification",
+  "parameters": [
+    {
+      "name": "bearerToken",
+      "type": "string",
+      "required": true,
+      "description": "The Twitter API Bearer Token used for authenticating API requests."
+    },
+    {
+      "name": "apexTwitterId",
+      "type": "string",
+      "required": true,
+      "description": "The Twitter user ID of the account that is expected to be followed."
+    },
+    {
+      "name": "userTwitterId",
+      "type": "string",
+      "required": true,
+      "description": "The Twitter user ID of the user whose following status is being verified."
+    }
+  ]
 }

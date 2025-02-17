@@ -50,7 +50,13 @@ Follow these steps to create a new verification script for the Verification Serv
 
 ### 1. Create a New Script Directory
 
-Navigate to the `src/scripts` folder and create a new directory named after your script. Use PascalCase for consistency. 
+You can use the provided generator script to create a new script. Use PascalCase for consistency.
+
+```bash
+npm run generate
+```
+
+If you want to do it manually, navigate to the `src/scripts` folder and create a new directory named after your script. 
 
 ```bash
 cd src/scripts
@@ -71,7 +77,15 @@ Inside the new script directory, create a `manifest.json` file to define the scr
 {
   "name": "MyNewVerification",
   "description": "Description of MyNewVerification script.",
-  "path": "./MyNewVerification"
+  "path": "./MyNewVerification",
+  "parameters": [
+    {
+      "name": "params",
+      "type": "any",
+      "required": false,
+      "description": "Arbitrary parameters for verification. Customize this as needed for specific verification requirements."
+    }
+  ]
 }
 ```
 
@@ -83,10 +97,11 @@ Create a TypeScript file for your script in the same directory. Implement the `V
 
 ```typescript
 import { VerificationScript } from '../../interfaces/VerificationScript';
+import manifest from './manifest.json';
 
 export class MyNewVerification implements VerificationScript {
-    name = 'MyNewVerification';
-    description = 'Description of what this script verifies';
+    name = manifest.name;
+    description = manifest.description;
 
     async execute(params: any): Promise<boolean> {
         console.log('Executing MyNewVerification with params:', params);

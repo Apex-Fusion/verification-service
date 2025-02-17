@@ -1,5 +1,13 @@
 {
   "name": "ExampleVerification",
   "description": "Example verification script",
-  "path": "./ExampleVerification"
+  "path": "./ExampleVerification",
+  "parameters": [
+    {
+      "name": "params",
+      "type": "any",
+      "required": false,
+      "description": "Arbitrary parameters for verification. Customize this as needed for specific verification requirements."
+    }
+  ]
 }

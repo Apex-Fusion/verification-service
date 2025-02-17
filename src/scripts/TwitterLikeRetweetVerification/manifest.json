@@ -1,5 +1,31 @@
 {
   "name": "TwitterLikeRetweetVerification",
   "description": "Verifies if a user has liked and retweeted Apex Fusion posts",
-  "path": "./TwitterLikeRetweetVerification"
+  "path": "./TwitterLikeRetweetVerification",
+  "parameters": [
+    {
+      "name": "bearerToken",
+      "type": "string",
+      "required": true,
+      "description": "The Twitter API Bearer Token used to authenticate requests."
+    },
+    {
+      "name": "apexTwitterId",
+      "type": "string",
+      "required": true,
+      "description": "The Twitter user ID of the account whose tweets are expected to be retweeted."
+    },
+    {
+      "name": "userTwitterId",
+      "type": "string",
+      "required": true,
+      "description": "The Twitter user ID of the user whose tweets are being checked for engagement."
+    },
+    {
+      "name": "noPosts",
+      "type": "number",
+      "required": true,
+      "description": "The minimum number of tweets (from the specified account) that must have been retweeted by the user."
+    }
+  ]
 }

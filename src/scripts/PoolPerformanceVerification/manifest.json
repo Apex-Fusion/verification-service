@@ -1,0 +1,39 @@
+{
+  "name": "PoolPerformanceVerification",
+  "description": "Verifies pool performance in the current epoch by comparing expected blocks (based on active stake percentage) with actual produced blocks against allowed missed percentage and minimum produced blocks",
+  "path": "./PoolPerformanceVerification",
+  "parameters": [
+    {
+      "name": "thresholdMissedPct",
+      "type": "number",
+      "required": true,
+      "description": "Allowed percentage of missed blocks (e.g., 5 for 5%)."
+    },
+    {
+      "name": "minProducedBlocks",
+      "type": "number",
+      "required": true,
+      "description": "Minimum total produced blocks required over the epochs."
+    },
+    {
+      "name": "poolBech32",
+      "type": "string",
+      "required": true,
+      "description": "The pool ID in bech32 format."
+    },
+    {
+      "name": "historyEpochs",
+      "type": "number",
+      "required": false,
+      "default": 1,
+      "description": "Optional number of past epochs to aggregate performance; default is 1 (current epoch only)."
+    },
+    {
+      "name": "network",
+      "type": "string",
+      "required": false,
+      "default": "mainnet",
+      "description": "The network to query ('testnet' or 'mainnet'); defaults to 'mainnet'."
+    }
+  ]
+}

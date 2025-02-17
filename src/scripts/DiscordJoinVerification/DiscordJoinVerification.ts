@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { VerificationScript } from '../../interfaces/VerificationScript';
+import manifest from './manifest.json';
 export class DiscordJoinVerification implements VerificationScript {
-    name = 'DiscordJoinVerification';
-    description = 'Verifies if a user has joined the Apex Fusion Discord server';
+    name = manifest.name;
+    description = manifest.description;
 
     async execute(params: { botToken: string; serverId: string; userId: string }): Promise<boolean> {
         const { botToken, serverId, userId } = params;

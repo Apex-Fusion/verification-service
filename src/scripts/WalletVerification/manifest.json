@@ -1,6 +1,38 @@
 {
-    "name": "WalletVerification",
-    "description": "Verifies if a user owns a wallet on a given network",
-    "path": "./WalletVerification"
-  }
+  "name": "WalletVerification",
+  "description": "Verifies if a user owns a wallet on a given network",
+  "path": "./WalletVerification",
+  "parameters": [
+    {
+      "name": "walletAddress",
+      "type": "string",
+      "required": true,
+      "description": "The wallet address to be verified. This address is used to reconstruct the expected message and compare it with the extracted address from the signature."
+    },
+    {
+      "name": "network",
+      "type": "string",
+      "required": true,
+      "description": "The network type to determine which verification method to use. Valid values are 'prime', 'vector', or 'nexus'."
+    },
+    {
+      "name": "signature",
+      "type": "object",
+      "required": true,
+      "description": "The signature data used for verification. For 'prime' and 'vector', this should include a hex-encoded 'signature' and 'key'. For 'nexus', it is an Ethereum-style signature string."
+    },
+    {
+      "name": "isTestnet",
+      "type": "boolean",
+      "required": false,
+      "description": "Optional flag used when the network is 'vector'. Indicates if the verification should use the testnet address format (true) or mainnet (false)."
+    },
+    {
+      "name": "isStakingAddress",
+      "type": "boolean",
+      "required": false,
+      "description": "Optional flag used when the network is 'prime'. Indicates whether the provided walletAddress should be treated as a staking address."
+    }
+  ]
+}
   

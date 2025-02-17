@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { VerificationScript } from '../../interfaces/VerificationScript';
+import manifest from './manifest.json';
 export class YoutubeSubscriptionVerification implements VerificationScript {
-    name = 'YoutubeSubscriptionVerification';
-    description = 'Verifies if a user is subscribed to the Apex Fusion YouTube channel';
+    name = manifest.name;
+    description = manifest.description;
 
     async execute(params: { apiKey: string; apexChannelId: string; userChannelId: string }): Promise<boolean> {
         const { apiKey, apexChannelId, userChannelId } = params;

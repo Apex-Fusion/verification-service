@@ -1,5 +1,25 @@
 {
   "name": "YoutubeSubscriptionVerification",
   "description": "Verifies if a user is subscribed to the Apex Fusion YouTube channel",
-  "path": "./YoutubeSubscriptionVerification"
+  "path": "./YoutubeSubscriptionVerification",
+  "parameters": [
+    {
+      "name": "apiKey",
+      "type": "string",
+      "required": true,
+      "description": "The YouTube API key used to authenticate and authorize requests to the YouTube Data API."
+    },
+    {
+      "name": "apexChannelId",
+      "type": "string",
+      "required": true,
+      "description": "The ID of the apex YouTube channel that the user is expected to be subscribed to."
+    },
+    {
+      "name": "userChannelId",
+      "type": "string",
+      "required": true,
+      "description": "The ID of the user's YouTube channel whose subscription status is being verified."
+    }
+  ]
 }

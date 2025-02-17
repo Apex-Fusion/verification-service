@@ -1,8 +1,10 @@
 import axios from 'axios';
 import { VerificationScript } from '../../interfaces/VerificationScript';
+import manifest from './manifest.json';
+
 export class TwitterLikeRetweetVerification implements VerificationScript {
-    name = 'TwitterLikeRetweetVerification';
-    description = 'Verifies if a user has liked and retweeted Apex Fusion posts';
+    name = manifest.name;
+    description = manifest.description;
 
     async execute(params: { bearerToken: string; apexTwitterId: string; userTwitterId: string, noPosts: number }): Promise<boolean> {
         const { bearerToken, apexTwitterId, userTwitterId, noPosts } = params;

@@ -1,0 +1,19 @@
+{
+  "name": "OpenAIImageQueryScript",
+  "description": "Sends a question and an image URL to OpenAI Vision API and returns a JSON response with keys 'result' (boolean) and 'comment' (string).",
+  "path": "./OpenAIImageQueryScript",
+  "parameters": [
+    {
+      "name": "question",
+      "type": "string",
+      "required": true,
+      "description": "The question to ask about the image (e.g., 'Is there a cat in this image?')."
+    },
+    {
+      "name": "imageUrl",
+      "type": "string",
+      "required": true,
+      "description": "The URL of the image to be analyzed by the OpenAI Vision API."
+    }
+  ]
+}

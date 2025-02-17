@@ -1,7 +1,7 @@
-import {VerificationPlugin} from '../interfaces/VerificationPlugin';
+import { VerificationPlugin } from '../interfaces/VerificationPlugin';
 import * as fs from 'fs';
 import * as path from 'path';
-import {watch, readFileSync} from 'fs';
+import { watch } from 'fs';
 import { VerificationScript } from '../interfaces/VerificationScript';
 
 export class ScriptManager {
@@ -18,18 +18,26 @@ export class ScriptManager {
 
         fs.readdirSync(this.scriptsDir).forEach((scriptFolder) => {
             const manifestPath = path.join(this.scriptsDir, scriptFolder, 'manifest.json');
+            console.log(`Loading manifest from: ${manifestPath}`);
             if (fs.existsSync(manifestPath)) {
                 try {
-                    const {name, description, path: scriptPath} = require(manifestPath);
+                    const manifestContent = require(manifestPath);
+                    const { name, description, path: scriptPath, parameters } = manifestContent;
                     const scriptModule = require(path.join(this.scriptsDir, scriptFolder, scriptPath));
                     const scriptInstance: VerificationScript = new scriptModule[name]();
-                    const verificationPluginInstance: VerificationPlugin = { method: scriptInstance, name, description, path: scriptPath };
+                    const verificationPluginInstance: VerificationPlugin = {
+                        method: scriptInstance,
+                        name,
+                        description,
+                        path: scriptPath,
+                        parameters
+                    };
+                    
                     newScripts.set(scriptInstance.name, verificationPluginInstance);
                 } catch (err) {
                     console.error(`Failed to load script from ${manifestPath}:`, err);
                 }
             }
-            console.log(`Loading manifest from: ${manifestPath}`);
         });
 
         this.scripts = newScripts;
@@ -37,7 +45,7 @@ export class ScriptManager {
     }
 
     private watchScriptsFolder() {
-        watch(this.scriptsDir, {recursive: true}, (eventType, filename) => {
+        watch(this.scriptsDir, { recursive: true }, (eventType, filename) => {
             console.log(`Detected ${eventType} on ${filename}. Reloading scripts...`);
             this.loadScripts();
         });
@@ -48,14 +56,14 @@ export class ScriptManager {
         if (!script) {
             throw new Error(`No script registered with name ${name}.`);
         }
-        return await script.method!.execute(params);
+        return await script.method.execute(params);
     }
 
     listScripts(): any[] {
-        return Array.from(this.scripts.keys()).map(key => ({
-                name: this.scripts.get(key)!.name,
-                description: this.scripts.get(key)!.description,
-            })
-        );
+        return Array.from(this.scripts.values()).map(plugin => ({
+            name: plugin.name,
+            description: plugin.description,
+            parameters: plugin.parameters
+        }));
     }
 }

@@ -1,0 +1,13 @@
+{
+  "name": "MetadataValidation",
+  "description": "Validates that pool metadata conforms to Cardano standards",
+  "path": "./MetadataValidation",
+  "parameters": [
+    {
+      "name": "meta_url",
+      "type": "string",
+      "required": true,
+      "description": "A URL pointing to the metadata JSON file. The file must contain the required fields: name, ticker, description, and homepage (all as strings), with optional 'extended' field if available."
+    }
+  ]
+}

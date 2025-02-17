@@ -1,5 +1,25 @@
 {
   "name": "DiscordJoinVerification",
   "description": "Verifies if a user has joined the Apex Fusion Discord server",
-  "path": "./DiscordJoinVerification"
+  "path": "./DiscordJoinVerification",
+  "parameters": [
+    {
+      "name": "botToken",
+      "type": "string",
+      "required": true,
+      "description": "The Discord Bot token used for authentication."
+    },
+    {
+      "name": "serverId",
+      "type": "string",
+      "required": true,
+      "description": "The ID of the Discord server (guild) to check membership for."
+    },
+    {
+      "name": "userId",
+      "type": "string",
+      "required": true,
+      "description": "The ID of the Discord user whose membership is being verified."
+    }
+  ]
 }

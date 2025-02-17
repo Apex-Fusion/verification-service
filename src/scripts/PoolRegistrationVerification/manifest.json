@@ -1,0 +1,5 @@
+{
+  "name": "PoolRegistrationVerification",
+  "description": "Verifies that a pool with a given ticker has the expected number in its metadata",
+  "path": "./PoolRegistrationVerification"
+}

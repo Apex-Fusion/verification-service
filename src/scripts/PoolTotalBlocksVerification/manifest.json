@@ -1,0 +1,25 @@
+{
+  "name": "PoolTotalBlocksVerification",
+  "description": "Verifies that the cumulative block count for a pool (from /pool_info) meets or exceeds the provided expected total.",
+  "path": "./PoolTotalBlocksVerification",
+  "parameters": [
+    {
+      "name": "expectedTotalBlocks",
+      "type": "number",
+      "required": true,
+      "description": "The minimum cumulative number of blocks that the pool must have produced since inception."
+    },
+    {
+      "name": "poolBech32",
+      "type": "string",
+      "required": true,
+      "description": "The pool's identifier in bech32 format."
+    },
+    {
+      "name": "network",
+      "type": "string",
+      "required": false,
+      "description": "The network to query (either 'mainnet' or 'testnet'). Defaults to 'mainnet' if not provided."
+    }
+  ]
+}
