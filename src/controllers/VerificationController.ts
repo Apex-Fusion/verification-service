@@ -20,7 +20,7 @@ export const executeScript = async (req: Request, res: Response) => {
         } else if (typeof result === "object" && result !== null) {
             // Assuming the object always has a `result` key (boolean) and a `message` key.
             finalResponse.result = result.result ? "success" : "validation_failed";
-            finalResponse.message = result.message;
+            finalResponse.message = result.comment;
         } else {
             // Optionally, handle any other unexpected types.
             finalResponse.result = String(result);
