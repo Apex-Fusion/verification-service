@@ -1,0 +1,20 @@
+{
+  "name": "PrimeDelegationCheck",
+  "description": "Verifies if a given Prime address is delegated to any stake pool using Koios API",
+  "path": "./PrimeDelegationCheck",
+  "parameters": [
+    {
+      "name": "address",
+      "type": "string",
+      "required": true,
+      "description": "The Prime payment address to check for delegation status."
+    },
+    {
+      "name": "network",
+      "type": "string",
+      "required": false,
+      "default": "mainnet",
+      "description": "The network to query ('testnet' or 'mainnet'); defaults to 'mainnet'."
+    }
+  ]
+} 
