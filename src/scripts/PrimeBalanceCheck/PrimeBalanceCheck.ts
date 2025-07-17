@@ -36,11 +36,11 @@ class KoiosService {
     async getAccountBalance(address: string): Promise<number> {
         try {
             console.log(`Fetching balance for address: ${address}`);
-            const response = await this.client.get('/account_info', {
-                params: { _address: address }
+            const response = await this.client.post('/address_info', {
+                _addresses: [address]
             });
 
-            if (response.data && response.data.length > 0) {
+            if (response.data && response.data.length > 0 && response.data[0]) {
                 const balance = parseInt(response.data[0].balance || '0');
                 console.log(`Balance found: ${balance} lovelace`);
                 return balance;
@@ -107,8 +107,9 @@ export class PrimeBalanceCheck implements VerificationScript {
             };
         }
 
-        // Validate minimum balance
-        if (typeof minimumBalance !== 'number' || minimumBalance < 0) {
+        // Validate and convert minimum balance to number
+        const minBalanceNum = typeof minimumBalance === 'string' ? parseInt(minimumBalance) : minimumBalance;
+        if (isNaN(minBalanceNum) || minBalanceNum < 0) {
             return {
                 result: 'error',
                 message: 'Invalid minimum balance. Must be a positive number'
@@ -119,15 +120,15 @@ export class PrimeBalanceCheck implements VerificationScript {
 
         try {
             const balance = await koiosService.getAccountBalance(address);
-            const hasMinimumBalance = balance >= minimumBalance;
+            const hasMinimumBalance = balance >= minBalanceNum;
             
             const balanceADA = this.convertLovelaceToADA(balance);
-            const minimumBalanceADA = this.convertLovelaceToADA(minimumBalance);
+            const minimumBalanceADA = this.convertLovelaceToADA(minBalanceNum);
 
             const responseData = {
                 address,
                 balance,
-                minimumBalance,
+                minimumBalance: minBalanceNum,
                 balanceADA: Math.round(balanceADA * 1000000) / 1000000, // Round to 6 decimal places
                 minimumBalanceADA: Math.round(minimumBalanceADA * 1000000) / 1000000,
                 hasMinimumBalance,
