@@ -1,8 +1,8 @@
-import { VerificationPlugin } from '../interfaces/VerificationPlugin';
+import {VerificationPlugin} from '../interfaces/VerificationPlugin';
 import * as fs from 'fs';
 import * as path from 'path';
-import { watch } from 'fs';
-import { VerificationScript } from '../interfaces/VerificationScript';
+import {watch} from 'fs';
+import {VerificationScript} from '../interfaces/VerificationScript';
 
 export class ScriptManager {
     private scripts: Map<string, VerificationPlugin> = new Map();
@@ -22,7 +22,7 @@ export class ScriptManager {
             if (fs.existsSync(manifestPath)) {
                 try {
                     const manifestContent = require(manifestPath);
-                    const { name, description, path: scriptPath, parameters } = manifestContent;
+                    const {name, description, path: scriptPath, parameters} = manifestContent;
                     const scriptModule = require(path.join(this.scriptsDir, scriptFolder, scriptPath));
                     const scriptInstance: VerificationScript = new scriptModule[name]();
                     const verificationPluginInstance: VerificationPlugin = {
@@ -32,7 +32,7 @@ export class ScriptManager {
                         path: scriptPath,
                         parameters
                     };
-                    
+
                     newScripts.set(scriptInstance.name, verificationPluginInstance);
                 } catch (err) {
                     console.error(`Failed to load script from ${manifestPath}:`, err);
@@ -41,11 +41,11 @@ export class ScriptManager {
         });
 
         this.scripts = newScripts;
-        console.log('Scripts reloaded:', this.listScripts());
+        console.log("Scripts reloaded:", JSON.stringify(this.listScripts(), null, 2));
     }
 
     private watchScriptsFolder() {
-        watch(this.scriptsDir, { recursive: true }, (eventType, filename) => {
+        watch(this.scriptsDir, {recursive: true}, (eventType, filename) => {
             console.log(`Detected ${eventType} on ${filename}. Reloading scripts...`);
             this.loadScripts();
         });
@@ -65,5 +65,13 @@ export class ScriptManager {
             description: plugin.description,
             parameters: plugin.parameters
         }));
+    }
+
+    getScript(name: string): VerificationPlugin {
+        const script = this.scripts.get(name);
+        if (!script) {
+            throw new Error(`No script registered with name ${name}.`);
+        }
+        return script;
     }
 }

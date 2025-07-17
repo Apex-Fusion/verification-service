@@ -1,0 +1,27 @@
+{
+  "name": "PrimeBalanceCheck",
+  "description": "Verifies that a Prime wallet address has a minimum balance on the Prime blockchain",
+  "path": "./PrimeBalanceCheck",
+  "parameters": [
+    {
+      "name": "address",
+      "type": "string",
+      "required": true,
+      "description": "The Prime wallet address to check balance for (must start with 'addr1')"
+    },
+    {
+      "name": "minimumBalance",
+      "type": "number",
+      "required": false,
+      "default": 1000000,
+      "description": "Minimum balance required in lovelace (1 ADA = 1,000,000 lovelace)"
+    },
+    {
+      "name": "network",
+      "type": "string",
+      "required": false,
+      "default": "mainnet",
+      "description": "Network to query ('mainnet' or 'testnet')"
+    }
+  ]
+} 
