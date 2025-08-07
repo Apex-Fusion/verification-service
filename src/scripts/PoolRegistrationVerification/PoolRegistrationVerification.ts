@@ -77,18 +77,32 @@ export class PoolRegistrationVerification implements VerificationScript {
             return { result: false, message: `Failed to fetch extended URL ${metaData.extended}. Status: ${extendedResponse.status}` };
           }
           const extendedData = await extendedResponse.json();
-          if (extendedData.info.about.verification_code !== undefined) {
-            if (extendedData.info.about.verification_code === expectedCode) {
-              console.log(`Pool ${ticker} has the expected verification_code ${expectedCode} in extended data.`);
+          
+          // Check for verification_code at root level of extended metadata
+          if (extendedData.verification_code !== undefined) {
+            if (extendedData.verification_code === expectedCode) {
+              console.log(`Pool ${ticker} has the expected verification_code ${expectedCode} in extended data root level.`);
               return true;
             } else {
-              console.error(`Pool ${ticker} has verification_code ${extendedData.verification_code} in extended data, expected ${expectedCode}.`);
-              return { result: false, message: `Pool ${ticker} has verification_code ${extendedData.verification_code} in extended data, expected ${expectedCode}.` };
+              console.error(`Pool ${ticker} has verification_code ${extendedData.verification_code} in extended data root level, expected ${expectedCode}.`);
+              return { result: false, message: `Pool ${ticker} has verification_code ${extendedData.verification_code} in extended data root level, expected ${expectedCode}.` };
             }
-          } else {
-            console.error(`verification_code not found in extended data for pool ${ticker}.`);
-            return { result: false, message: `verification_code not found in extended data for pool ${ticker}.` };
           }
+          
+          // Check for verification_code in about section of extended metadata
+          if (extendedData.info && extendedData.info.about && extendedData.info.about.verification_code !== undefined) {
+            if (extendedData.info.about.verification_code === expectedCode) {
+              console.log(`Pool ${ticker} has the expected verification_code ${expectedCode} in extended data about section.`);
+              return true;
+            } else {
+              console.error(`Pool ${ticker} has verification_code ${extendedData.info.about.verification_code} in extended data about section, expected ${expectedCode}.`);
+              return { result: false, message: `Pool ${ticker} has verification_code ${extendedData.info.about.verification_code} in extended data about section, expected ${expectedCode}.` };
+            }
+          }
+          
+          // If verification_code is not found in either location
+          console.error(`verification_code not found in extended data for pool ${ticker} (checked root level and about section).`);
+          return { result: false, message: `verification_code not found in extended data for pool ${ticker} (checked root level and about section).` };
         } catch (error: any) {
           console.error(`Error fetching or parsing extended data from ${metaData.extended}:`, error);
           return { result: false, message: `Error fetching or parsing extended data from ${metaData.extended}: ${error.message}` };
