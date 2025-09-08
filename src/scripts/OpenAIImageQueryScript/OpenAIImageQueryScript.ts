@@ -100,6 +100,15 @@ export class OpenAIImageQueryScript implements VerificationScript {
       }
 
       const responseData = await response.json();
+      
+      // Log the complete response for debugging
+      console.log('Complete OpenAI API response:', JSON.stringify(responseData, null, 2));
+      
+      // Log specific parts of the response structure
+      console.log('Response has choices:', !!responseData.choices);
+      console.log('Choices length:', responseData.choices?.length || 0);
+      console.log('First choice message:', responseData.choices?.[0]?.message || 'No message');
+      console.log('Message content:', responseData.choices?.[0]?.message?.content || 'No content');
 
       if (
         responseData.choices &&
@@ -125,6 +134,17 @@ export class OpenAIImageQueryScript implements VerificationScript {
         return answerJson;
       } else {
         console.error('OpenAI did not return expected data.');
+        console.error('Missing data analysis:');
+        console.error('- responseData exists:', !!responseData);
+        console.error('- responseData.choices exists:', !!responseData.choices);
+        console.error('- responseData.choices is array:', Array.isArray(responseData.choices));
+        console.error('- responseData.choices.length:', responseData.choices?.length || 'N/A');
+        if (responseData.choices && responseData.choices.length > 0) {
+          console.error('- first choice exists:', !!responseData.choices[0]);
+          console.error('- first choice.message exists:', !!responseData.choices[0]?.message);
+          console.error('- first choice.message.content exists:', !!responseData.choices[0]?.message?.content);
+          console.error('- first choice.message.content value:', responseData.choices[0]?.message?.content || 'EMPTY/NULL');
+        }
         return { result: false, message: 'OpenAI did not return expected data.' };
       }
     } catch (error: any) {
