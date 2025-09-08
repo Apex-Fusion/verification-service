@@ -56,7 +56,7 @@ export class OpenAIImageQueryScript implements VerificationScript {
           {
             type: 'text',
             text:
-              'You are an image analyzer. Your task is to analyze the image provided and determine if it contains what is asked in the question. Respond only with a valid JSON object with exactly two keys: "result" (a boolean) and "comment" (a string). Do not include any additional text or formatting.',
+              'You are an image analyzer. Your task is to analyze the image provided and determine if it contains what is asked in the question. You MUST respond with a valid JSON object with exactly two keys: "result" (a boolean) and "comment" (a string). Never respond with plain text. Always use JSON format. Example: {"result": true, "comment": "The image contains the requested element"}',
           },
         ],
       },
@@ -65,7 +65,7 @@ export class OpenAIImageQueryScript implements VerificationScript {
         content: [
           {
             type: 'text',
-            text: question,
+            text: `${question}\n\nIMPORTANT: Respond only with valid JSON format: {"result": boolean, "comment": "your analysis"}`,
           },
           {
             type: 'image_url',
@@ -88,6 +88,7 @@ export class OpenAIImageQueryScript implements VerificationScript {
           model: model,
           messages: messages,
           temperature: 0.2,
+          response_format: { type: "json_object" },
         }),
       });
 
@@ -123,7 +124,16 @@ export class OpenAIImageQueryScript implements VerificationScript {
           answerJson = JSON.parse(extractedJson);
         } catch (error) {
           console.error('Response from OpenAI is not valid JSON:', answerRaw);
-          return { result: false, message: 'Response from OpenAI is not valid JSON.' };
+          console.error('Extracted content:', extractedJson);
+          
+          // Fallback: if OpenAI returns plain text instead of JSON, create a JSON response
+          // This handles cases where the model ignores JSON format instructions
+          console.log('Attempting fallback: converting plain text to JSON format');
+          answerJson = {
+            result: false,
+            comment: `OpenAI returned plain text instead of JSON: ${extractedJson}`
+          };
+          console.log('Fallback JSON created:', answerJson);
         }
         // Validate that the JSON has exactly two keys with expected types
         if (typeof answerJson.result !== 'boolean' || typeof answerJson.comment !== 'string') {
