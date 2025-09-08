@@ -95,7 +95,21 @@ export class PoolPerformanceVerification implements VerificationScript {
             console.error(`Failed to fetch epoch info for epoch ${epoch}. Status:`, epochInfoResponse.status);
             return { result: false, message: `Failed to fetch epoch info for epoch ${epoch}. Status: ${epochInfoResponse.status}` };
           }
+          
           const epochInfoData = await epochInfoResponse.json();
+          
+          // Handle API database errors gracefully
+          if (epochInfoData.code && epochInfoData.message && epochInfoData.message.includes('relation')) {
+            console.warn(`Database error for epoch ${epoch}:`, epochInfoData.message);
+            console.warn(`Falling back to performance analysis without epoch_info data`);
+            
+            // Fallback: Use only produced blocks data from pool_history without calculating expected blocks
+            const producedCount = record.block_cnt;
+            console.log(`Epoch ${epoch} (fallback mode): produced blocks=${producedCount}`);
+            totalProducedBlocks += producedCount;
+            continue; // Skip expected blocks calculation
+          }
+          
           const epochBlkCount = epochInfoData[0]?.blk_count;
           if (epochBlkCount === undefined) {
             console.error(`blk_count not found in epoch info for epoch ${epoch}`);
@@ -110,17 +124,32 @@ export class PoolPerformanceVerification implements VerificationScript {
           totalProducedBlocks += producedCount;
         }
 
-        const totalMissedBlocks = totalExpectedBlocks > totalProducedBlocks ? totalExpectedBlocks - totalProducedBlocks : 0;
-        const overallMissedPercentage = totalExpectedBlocks > 0 ? (totalMissedBlocks / totalExpectedBlocks) * 100 : 0;
-        console.log(`Aggregated over epochs ${minEpoch}-${currentEpoch - 1}: Expected blocks=${totalExpectedBlocks.toFixed(2)}, Produced blocks=${totalProducedBlocks}, Missed blocks=${totalMissedBlocks.toFixed(2)} (${overallMissedPercentage.toFixed(2)}% missed)`);
+        if (totalExpectedBlocks > 0) {
+          // Normal mode: Calculate missed percentage when we have expected blocks data
+          const totalMissedBlocks = totalExpectedBlocks > totalProducedBlocks ? totalExpectedBlocks - totalProducedBlocks : 0;
+          const overallMissedPercentage = (totalMissedBlocks / totalExpectedBlocks) * 100;
+          console.log(`Aggregated over epochs ${minEpoch}-${currentEpoch - 1}: Expected blocks=${totalExpectedBlocks.toFixed(2)}, Produced blocks=${totalProducedBlocks}, Missed blocks=${totalMissedBlocks.toFixed(2)} (${overallMissedPercentage.toFixed(2)}% missed)`);
 
-        if (overallMissedPercentage <= thresholdMissedPct && totalProducedBlocks >= minProducedBlocks) {
-          console.log(`Aggregated pool performance is acceptable.`);
-          return true;
+          if (overallMissedPercentage <= thresholdMissedPct && totalProducedBlocks >= minProducedBlocks) {
+            console.log(`Aggregated pool performance is acceptable.`);
+            return true;
+          } else {
+            const message = `Aggregated pool performance not acceptable: missed ${overallMissedPercentage.toFixed(2)}% (allowed: ${thresholdMissedPct}%) or produced blocks ${totalProducedBlocks} is less than minimum required ${minProducedBlocks}.`;
+            console.error(message);
+            return { result: false, message };
+          }
         } else {
-          const message = `Aggregated pool performance not acceptable: missed ${overallMissedPercentage.toFixed(2)}% (allowed: ${thresholdMissedPct}%) or produced blocks ${totalProducedBlocks} is less than minimum required ${minProducedBlocks}.`;
-          console.error(message);
-          return { result: false, message };
+          // Fallback mode: Only check minimum produced blocks when epoch_info data is unavailable
+          console.log(`Fallback mode - Aggregated over epochs ${minEpoch}-${currentEpoch - 1}: Produced blocks=${totalProducedBlocks} (epoch_info unavailable, skipping missed percentage check)`);
+          
+          if (totalProducedBlocks >= minProducedBlocks) {
+            console.log(`Pool performance acceptable in fallback mode: produced ${totalProducedBlocks} blocks (minimum required: ${minProducedBlocks}).`);
+            return true;
+          } else {
+            const message = `Pool performance not acceptable in fallback mode: produced ${totalProducedBlocks} blocks is less than minimum required ${minProducedBlocks}.`;
+            console.error(message);
+            return { result: false, message };
+          }
         }
       } else {
         // If historyEpochs is 1, check only the current epoch.
@@ -140,7 +169,25 @@ export class PoolPerformanceVerification implements VerificationScript {
           console.error('Failed to fetch epoch info. Status:', epochInfoResponse.status);
           return { result: false, message: `Failed to fetch epoch info. Status: ${epochInfoResponse.status}` };
         }
+        
         const epochInfoData = await epochInfoResponse.json();
+        
+        // Handle API database errors gracefully
+        if (epochInfoData.code && epochInfoData.message && epochInfoData.message.includes('relation')) {
+          console.warn(`Database error for current epoch ${currentEpoch}:`, epochInfoData.message);
+          console.warn(`Falling back to basic performance check without expected blocks calculation`);
+          
+          // Fallback mode: Only check minimum produced blocks
+          if (producedBlocks >= minProducedBlocks) {
+            console.log(`Pool performance acceptable in fallback mode: produced ${producedBlocks} blocks (minimum required: ${minProducedBlocks}).`);
+            return true;
+          } else {
+            const message = `Pool performance not acceptable in fallback mode: produced ${producedBlocks} blocks is less than minimum required ${minProducedBlocks}.`;
+            console.error(message);
+            return { result: false, message };
+          }
+        }
+        
         const totalEpochBlocks = epochInfoData[0]?.blk_count;
         if (totalEpochBlocks === undefined) {
           console.error('blk_count not found in epoch info');

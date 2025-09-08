@@ -5,6 +5,22 @@ export class OpenAIImageQueryScript implements VerificationScript {
   name = manifest.name;
   description = manifest.description;
 
+  /**
+   * Extract JSON from a response that might be wrapped in markdown code blocks
+   */
+  private extractJsonFromResponse(response: string): string {
+    const trimmed = response.trim();
+    
+    // Check if response is wrapped in ```json ... ``` or ``` ... ```
+    const jsonBlockMatch = trimmed.match(/^```(?:json)?\s*\n?([\s\S]*?)\n?```$/);
+    if (jsonBlockMatch) {
+      return jsonBlockMatch[1].trim();
+    }
+    
+    // If no code block found, return the original response
+    return trimmed;
+  }
+
   async execute(params: any): Promise<any> {
     // Expected parameters:
     // - question: string (e.g., "Is there a cat in this image?")
@@ -92,9 +108,10 @@ export class OpenAIImageQueryScript implements VerificationScript {
         responseData.choices[0].message.content
       ) {
         const answerRaw = responseData.choices[0].message.content.trim();
+        const extractedJson = this.extractJsonFromResponse(answerRaw);
         let answerJson;
         try {
-          answerJson = JSON.parse(answerRaw);
+          answerJson = JSON.parse(extractedJson);
         } catch (error) {
           console.error('Response from OpenAI is not valid JSON:', answerRaw);
           return { result: false, message: 'Response from OpenAI is not valid JSON.' };
