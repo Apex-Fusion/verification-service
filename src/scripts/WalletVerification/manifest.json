@@ -13,13 +13,13 @@
       "name": "network",
       "type": "string",
       "required": true,
-      "description": "The network type to determine which verification method to use. Valid values are 'prime', 'vector', or 'nexus'."
+      "description": "The network type to determine which verification method to use. Valid values are 'prime', 'vector', 'nexus', or 'cardano'."
     },
     {
       "name": "signature",
-      "type": "object",
+      "type": "string",
       "required": true,
-      "description": "The signature data used for verification. For 'prime' and 'vector', this should include a hex-encoded 'signature' and 'key'. For 'nexus', it is an Ethereum-style signature string."
+      "description": "The signature data used for verification. For 'prime' and 'vector', this should include a hex-encoded 'signature' and 'key'. For 'nexus', it is an Ethereum-style signature string. For 'cardano', it is a CIP-30 COSESign1 hex string."
     },
     {
       "name": "isTestnet",
@@ -32,6 +32,12 @@
       "type": "boolean",
       "required": false,
       "description": "Optional flag used when the network is 'prime'. Indicates whether the provided walletAddress should be treated as a staking address."
+    },
+    {
+      "name": "customMessage",
+      "type": "string",
+      "required": false,
+      "description": "Optional custom message for verification. Used with 'cardano' network to specify a custom verification message instead of the default 'Connect:address' format."
     }
   ]
 }
