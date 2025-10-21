@@ -1,6 +1,7 @@
 import { VerificationScript } from '../../interfaces/VerificationScript';
 import axios, { AxiosInstance } from 'axios';
 import manifest from './manifest.json';
+import { Address as CardanoAddress } from '@emurgo/cardano-serialization-lib-nodejs';
 
 interface BalanceResult {
     result: string;
@@ -68,8 +69,31 @@ export class PrimeBalanceCheck implements VerificationScript {
     description = manifest.description;
 
     private validateAddress(address: string): boolean {
-        // Prime addresses should start with 'addr1'
-        return address.startsWith('addr1');
+        try {
+            CardanoAddress.from_bech32(address);
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
+    private isHexString(input: string): boolean {
+        const normalized = input.startsWith('0x') ? input.slice(2) : input;
+        return /^[0-9a-fA-F]+$/.test(normalized) && normalized.length % 2 === 0;
+    }
+
+    private normalizeToBech32(address: string): string {
+        const trimmed = address.trim();
+        if (this.isHexString(trimmed)) {
+            try {
+                const hex = trimmed.startsWith('0x') ? trimmed.slice(2) : trimmed;
+                const bech = CardanoAddress.from_bytes(Buffer.from(hex, 'hex')).to_bech32();
+                return bech;
+            } catch {
+                return trimmed;
+            }
+        }
+        return trimmed;
     }
 
     private convertLovelaceToADA(lovelace: number): number {
@@ -91,11 +115,14 @@ export class PrimeBalanceCheck implements VerificationScript {
             };
         }
 
+        // Normalize potential hex address to bech32 first
+        const bech32Address = this.normalizeToBech32(address);
+
         // Validate address format
-        if (!this.validateAddress(address)) {
+        if (!this.validateAddress(bech32Address)) {
             return {
                 result: 'error',
-                message: 'Invalid Prime address format. Address must start with \'addr1\''
+                message: 'Invalid address format. Provide a valid bech32 address or a hex-encoded address'
             };
         }
 
@@ -119,14 +146,14 @@ export class PrimeBalanceCheck implements VerificationScript {
         const koiosService = new KoiosService(network);
 
         try {
-            const balance = await koiosService.getAccountBalance(address);
+            const balance = await koiosService.getAccountBalance(bech32Address);
             const hasMinimumBalance = balance >= minBalanceNum;
             
             const balanceADA = this.convertLovelaceToADA(balance);
             const minimumBalanceADA = this.convertLovelaceToADA(minBalanceNum);
 
             const responseData = {
-                address,
+                address: bech32Address,
                 balance,
                 minimumBalance: minBalanceNum,
                 balanceADA: Math.round(balanceADA * 1000000) / 1000000, // Round to 6 decimal places
